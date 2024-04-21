@@ -19,20 +19,55 @@
   <button onclick="checkPassword()">Submit</button>
 </div>
 <div id="playlist" class="hidden">
-  <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/2k4b61B9bfmL6cuCoDZrRB?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+  <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/2k4b61B9bfmL6cuCoDZrRB?utm_source=generator" width="100%" height="100%" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
 </div>
 <script>
+  function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+      var date = new Date();
+      date.setTime(date.getTime() + (days*24*60*60*1000));
+      expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+  }
+
+  function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+      var c = ca[i];
+      while (c.charAt(0)==' ') c = c.substring(1,c.length);
+      if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+  }
+
   function checkPassword() {
     var input = document.getElementById('password');
     var playlist = document.getElementById('playlist');
     var login = document.getElementById('login');
 
-    if(input.value === 'seedspeedmusic') {
+    if(input.value === 'seedspeedmusic' || getCookie('playlistAccess') === 'granted') {
+      setCookie('playlistAccess', 'granted', 7); // Set the cookie to expire in 7 days
       playlist.classList.remove('hidden');
       login.classList.add('hidden');
     } else {
       alert('Incorrect password!');
     }
+  }
+
+  function checkCookie() {
+    if(getCookie('playlistAccess') === 'granted') {
+      var playlist = document.getElementById('playlist');
+      var login = document.getElementById('login');
+      playlist.classList.remove('hidden');
+      login.classList.add('hidden');
+    }
+  }
+
+  window.onload = function() {
+    checkCookie();
   }
 </script>
 </body>
